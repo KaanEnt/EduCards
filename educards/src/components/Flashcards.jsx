@@ -59,10 +59,20 @@ const Flashcards = () => {
   }, [currentCardIndex, cards, isFlipped]);
 
   useEffect(() => {
-    fetch('/test.json')
-      .then(response => response.json())
-      .then(data => setCards(data))
-      .catch(error => console.error('Error loading flashcards:', error));
+    const fetchCards = async () => {
+      try {
+        const response = await fetch('http://localhost:8000/api/questions/');
+        if (!response.ok) {
+          throw new Error('Failed to fetch cards');
+        }
+        const data = await response.json();
+        setCards(data);
+      } catch (error) {
+        console.error('Error loading flashcards:', error);
+      }
+    };
+
+    fetchCards();
   }, []);
 
   const handleAnimationEnd = () => {
