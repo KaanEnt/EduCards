@@ -24,6 +24,7 @@ wheels/
 # Virtual Environment
 venv/
 ENV/
+new_env/
 
 # Django
 *.log
