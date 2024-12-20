@@ -1,7 +1,8 @@
+import React from 'react';
 import Flashcards from './components/Flashcards';
 import './components/Flashcards.css';
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
       <header className="app-header">
