@@ -41,13 +41,19 @@ const FlashcardContainer: React.FC = () => {
       .then(setCards);
   }, []);
 
+  React.useEffect(() => {
+    setIsFlipped(false);
+  }, [currentIndex]);
+
   const actions = {
     next: () => {
       setAnimationDirection('right');
+      setIsFlipped(false);
       setCurrentIndex(idx => (idx + 1) % cards.length);
     },
     previous: () => {
       setAnimationDirection('left');
+      setIsFlipped(false);
       setCurrentIndex(idx => (idx === 0 ? cards.length - 1 : idx - 1));
     },
     flip: () => setIsFlipped(f => !f),
@@ -55,7 +61,7 @@ const FlashcardContainer: React.FC = () => {
       const shuffled = [...cards].sort(() => Math.random() - 0.5);
       setCards(shuffled);
       setCurrentIndex(0);
-      setAnimationDirection('right');
+      setIsFlipped(false);
     }
   };
 
