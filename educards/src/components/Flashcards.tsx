@@ -101,38 +101,59 @@ const AnimatedCard: React.FC<{
   onFlip: () => void;
   animationDirection: 'left' | 'right';
 }> = ({ card, isFlipped, onFlip, animationDirection }) => {
-  const cardVariants = {
-    initial: { 
-      x: animationDirection === 'right' ? 300 : -300, 
-      opacity: 0
+  const slideVariants = {
+    enter: (direction: 'left' | 'right') => ({
+      x: direction === 'right' ? -1000 : 1000,
+      opacity: 0,
+      scale: 0.5
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        duration: 0.3
+      }
     },
-    animate: { 
-      x: 0, 
-      opacity: 1
-    },
-    exit: { 
-      x: animationDirection === 'right' ? -300 : 300, 
-      opacity: 0
+    exit: (direction: 'left' | 'right') => ({
+      x: direction === 'right' ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.5,
+      transition: {
+        duration: 0.3
+      }
+    })
+  };
+
+  const shuffleVariants = {
+    initial: { y: 0, opacity: 1 },
+    shuffle: {
+      y: [-20, 20, -20, 20, 0],
+      opacity: [1, 0.5, 1, 0.5, 1],
+      transition: {
+        duration: 0.5,
+        times: [0, 0.25, 0.5, 0.75, 1]
+      }
     }
   };
 
   return (
     <motion.div 
       key={card.id}
-      variants={cardVariants}
-      initial="initial"
-      animate="animate"
+      variants={slideVariants}
+      custom={animationDirection}
+      initial="enter"
+      animate="center"
       exit="exit"
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={`flashcard ${isFlipped ? 'flipped' : ''}`}
       onClick={onFlip}
+      whileHover={{ scale: 1.05 }}
+      whileTap={{ scale: 0.95 }}
     >
       <motion.div 
         className="flashcard-inner"
-        animate={{ 
-          rotateY: isFlipped ? 180 : 0,
-          transition: { type: "tween", duration: 0.5 }
-        }}
+        animate={{ rotateY: isFlipped ? 180 : 0 }}
+        transition={{ duration: 0.6 }}
       >
         <div className="flashcard-front">
           {card.question}
