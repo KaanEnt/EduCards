@@ -159,7 +159,7 @@ const AnimatedCard: React.FC<{
       <motion.div 
         className="flashcard-inner"
         animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.1 }}
       >
         <div className="flashcard-front">
           {card.question}

@@ -3,8 +3,8 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "start": "concurrently \"npm run frontend\" \"npm run backend\"",
-        "frontend": "cd educards && npm run start:react",
+        "start": "npm install && concurrently \"npm run frontend\" \"npm run backend\"",
+        "frontend": "cd educards && npm install && npm run start:react",
         "start:react": "react-scripts start",
         "backend": "cd backend && ..\\new_env\\Scripts\\Activate && python manage.py runserver",
         "build": "react-scripts build",
