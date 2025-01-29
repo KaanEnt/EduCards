@@ -1,0 +1,28 @@
+.flashcard-list {
+    background-color: var(--secondary-bg);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.topics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.topic {
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.topic:hover {
+    transform: translateY(-5px);
+}
+
+.topic h4 {
+    margin: 0;
+    color: white;
+} 
