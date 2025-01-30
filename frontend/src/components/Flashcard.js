@@ -3,8 +3,9 @@ import { useSprings, animated, to as interpolate } from '@react-spring/web';
 import { useDrag } from 'react-use-gesture';
 import './Flashcard.css';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
-const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setShowAnswer, cardColor, textColor, shadow, borderRadius }) => {
+const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setShowAnswer, cardColor, textColor, shadow, borderRadius, setCurrentIndex }) => {
   const [gone] = useState(() => new Set());
   const [props, api] = useSprings(flashcards.length, i => ({
     x: 0,
@@ -27,8 +28,12 @@ const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setS
     if (!down && trigger) {
       gone.add(index);
       setShowAnswer(false);
-      if (dir === 1) onNext();
-      else onPrevious();
+      
+      if (dir === 1) {
+        setCurrentIndex(prev => (prev + 1) % flashcards.length);
+      } else {
+        setCurrentIndex(prev => (prev - 1 + flashcards.length) % flashcards.length);
+      }
     }
 
     api.start(i => {
@@ -102,6 +107,20 @@ const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setS
       ))}
     </div>
   );
+};
+
+Flashcard.propTypes = {
+    flashcards: PropTypes.array.isRequired,
+    onNext: PropTypes.func.isRequired,
+    onPrevious: PropTypes.func.isRequired,
+    onShuffle: PropTypes.func.isRequired,
+    showAnswer: PropTypes.bool.isRequired,
+    setShowAnswer: PropTypes.func.isRequired,
+    cardColor: PropTypes.string.isRequired,
+    textColor: PropTypes.string.isRequired,
+    shadow: PropTypes.string.isRequired,
+    borderRadius: PropTypes.number.isRequired,
+    setCurrentIndex: PropTypes.func.isRequired
 };
 
 export default Flashcard; 

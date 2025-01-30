@@ -76,6 +76,7 @@ const Quiz = ({ flashcards, onClose, cardColor, textColor, shadow, borderRadius 
                     textColor={textColor}
                     shadow={shadow}
                     borderRadius={borderRadius}
+                    setCurrentIndex={setCurrentIndex}
                 />
             </div>
             <div className="controls">
