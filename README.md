@@ -49,12 +49,13 @@ EduCards is a comprehensive learning platform that combines a React-based fronte
 
 ## Future Roadmap
 
-- [ ] Add chat overlay
+- [x] Add chat overlay
 - [ ] Add user auth
-- [ ] Implement card creation feature
-- [ ] Add multiple deck support
+- [x] Implement card creation feature
+- [x] Add multiple deck support
 - [ ] Create progress tracking system
 - [ ] Implement varying levels of difficulty for cards
+- [x] Add Document Upload
 
 ## Performance Optimization
 
