@@ -1,69 +1,49 @@
-import React, { useState, useRef } from 'react';
-import axios from 'axios';
-import { useSpring, animated } from 'react-spring';
+import React, { useState } from 'react';
+import { geminiChat } from '../services/geminiWrapper';
 import './ChatInterface.css';
 
 const ChatInterface = () => {
-    const [messages, setMessages] = useState([]);
-    const [input, setInput] = useState('');
+    const [message, setMessage] = useState('');
+    const [conversation, setConversation] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const messagesEndRef = useRef(null);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
 
     const handleSend = async () => {
-        if (input.trim() === '') return;
+        if (!message.trim()) return;
         
-        const userMessage = { text: input, isUser: true };
-        setMessages(prev => [...prev, userMessage]);
-        setInput('');
         setIsLoading(true);
-
+        setConversation(prev => [...prev, { role: 'user', content: message }]);
+        
         try {
-            const response = await axios.post('http://localhost:8000/api/chat/messages/', {
-                message: input,
-                isUser: true
-            });
-            const aiMessage = { text: response.data.response, isUser: false };
-            setMessages(prev => [...prev, aiMessage]);
+            const response = await geminiChat(message);
+            setConversation(prev => [...prev, { role: 'assistant', content: response.response }]);
         } catch (error) {
-            console.error('Error:', error);
+            setConversation(prev => [...prev, { role: 'assistant', content: 'Error: Could not get response' }]);
         } finally {
             setIsLoading(false);
+            setMessage('');
         }
     };
 
-    const messageAnimation = useSpring({
-        from: { opacity: 0, transform: 'translateY(20px)' },
-        to: { opacity: 1, transform: 'translateY(0)' }
-    });
-
     return (
         <div className="chat-interface">
-            <div className="messages">
-                {messages.map((msg, index) => (
-                    <animated.div 
-                        key={index} 
-                        style={messageAnimation}
-                        className={`message ${msg.isUser ? 'user' : 'ai'}`}
-                    >
-                        {msg.text}
-                    </animated.div>
+            <div className="conversation">
+                {conversation.map((msg, index) => (
+                    <div key={index} className={`message ${msg.role}`}>
+                        {msg.content}
+                    </div>
                 ))}
-                <div ref={messagesEndRef} />
+                {isLoading && <div className="message assistant">Thinking...</div>}
             </div>
             <div className="input-area">
-                <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
                     disabled={isLoading}
+                    placeholder="Type your message..."
                 />
-                <button onClick={handleSend} disabled={isLoading}>
-                    {isLoading ? 'Sending...' : 'Send'}
+                <button onClick={handleSend} disabled={isLoading || !message.trim()}>
+                    Send
                 </button>
             </div>
         </div>
