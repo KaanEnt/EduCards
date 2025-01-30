@@ -1,18 +1,92 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSprings, animated, to as interpolate } from '@react-spring/web';
+import { useDrag } from 'react-use-gesture';
 import './Flashcard.css';
 
-const Flashcard = ({ flashcard }) => {
-    return (
-        <div className="flashcard">
-            <div className="front">
-                <h3>{flashcard.question}</h3>
+const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setShowAnswer }) => {
+  const [gone] = useState(() => new Set());
+  const [props, api] = useSprings(flashcards.length, i => ({
+    x: 0,
+    y: i * -4,
+    scale: 1,
+    rot: -10 + Math.random() * 20,
+    delay: i * 100,
+    from: { x: 0, rot: 0, scale: 1.5, y: -1000 }
+  }));
+
+  const bind = useDrag(({ args: [index], down, movement: [mx], direction: [xDir], velocity, tap }) => {
+    if (tap) {
+      setShowAnswer(prev => !prev);
+      return;
+    }
+
+    const trigger = velocity > 0.2;
+    const dir = xDir < 0 ? -1 : 1;
+    
+    if (!down && trigger) {
+      gone.add(index);
+      setShowAnswer(false); // Reset to question view
+      if (dir === 1) onNext();
+      else onPrevious();
+    }
+
+    api.start(i => {
+      if (index !== i) return;
+      const isGone = gone.has(index);
+      const x = isGone ? (200 + window.innerWidth) * dir : down ? mx : 0;
+      const rot = mx / 100 + (isGone ? dir * 10 * velocity : 0);
+      const scale = down ? 1.1 : 1;
+      
+      return {
+        x,
+        rot,
+        scale,
+        delay: undefined,
+        config: { friction: 50, tension: down ? 800 : isGone ? 200 : 500 },
+      };
+    });
+
+    if (!down && gone.size === flashcards.length) {
+      setTimeout(() => {
+        gone.clear();
+        api.start(i => ({
+          x: 0,
+          y: i * -4,
+          scale: 1,
+          rot: -10 + Math.random() * 20,
+          delay: i * 100,
+        }));
+        onShuffle();
+      }, 600);
+    }
+  });
+
+  const trans = (r, s) =>
+    `perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`;
+
+  return (
+    <div className="flashcard-container">
+      {props.map(({ x, y, rot, scale }, i) => (
+        <animated.div className="flashcard-deck" key={i} style={{ x, y }}>
+          <animated.div
+            {...bind(i)}
+            className="flashcard"
+            style={{
+              transform: interpolate([rot, scale], trans),
+            }}
+          >
+            <div className={`card-side ${showAnswer ? 'hidden' : ''}`}>
+              <h3>{flashcards[i].question}</h3>
             </div>
-            <div className="back">
-                <p>{flashcard.answer}</p>
-                {flashcard.topic && <small>Topic: {flashcard.topic}</small>}
+            <div className={`card-side ${!showAnswer ? 'hidden' : ''}`}>
+              <p>{flashcards[i].answer}</p>
+              {flashcards[i].topic && <small>Topic: {flashcards[i].topic}</small>}
             </div>
-        </div>
-    );
+          </animated.div>
+        </animated.div>
+      ))}
+    </div>
+  );
 };
 
 export default Flashcard; 

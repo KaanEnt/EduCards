@@ -1,37 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import History from './components/History';
 import ChatInterface from './components/ChatInterface';
 import FlashcardList from './components/FlashcardList';
 import Quiz from './components/Quiz';
 import { Leva } from 'leva';
+import axios from 'axios';
 import './App.css';
 
 function App() {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [showQuiz, setShowQuiz] = useState(false);
     const [quizCards, setQuizCards] = useState([]);
+    const [courses, setCourses] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Mock data - replace with actual data from your API
-    const courses = [
-        { id: 1, name: 'AI Fundamentals', topics: ['Neural Networks', 'Reinforcement Learning'] },
-        { id: 2, name: 'ML Basics', topics: ['Supervised Learning', 'Decision Trees'] },
-    ];
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const response = await axios.get('http://localhost:8000/api/flashcards/');
+                const flashcards = response.data;
+                
+                // Group flashcards by course and topics
+                const courseMap = new Map();
+                flashcards.forEach(flashcard => {
+                    if (!courseMap.has(flashcard.course)) {
+                        courseMap.set(flashcard.course, {
+                            id: courseMap.size + 1,
+                            name: flashcard.course,
+                            topics: new Map()
+                        });
+                    }
+                    const course = courseMap.get(flashcard.course);
+                    if (!course.topics.has(flashcard.topic)) {
+                        course.topics.set(flashcard.topic, []);
+                    }
+                    course.topics.get(flashcard.topic).push(flashcard);
+                });
 
-    const handleStartQuiz = (topic) => {
-        // Fetch flashcards for the selected topic
-        const topicCards = [
-            { question: 'What is a neural network?', answer: 'A series of algorithms...' },
-            { question: 'What is reinforcement learning?', answer: 'A type of machine learning...' },
-        ];
-        setQuizCards(topicCards);
-        setShowQuiz(true);
+                // Convert Map to array
+                const coursesArray = Array.from(courseMap.values()).map(course => ({
+                    ...course,
+                    topics: Array.from(course.topics.keys())
+                }));
+
+                setCourses(coursesArray);
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
+
+    const handleStartQuiz = async (topic) => {
+        try {
+            const response = await axios.get('http://localhost:8000/api/flashcards/', {
+                params: {
+                    course: selectedCourse.name,
+                    topic: topic
+                }
+            });
+            
+            // Ensure we only get flashcards for the exact course and topic
+            const filteredCards = response.data.filter(card => 
+                card.course === selectedCourse.name && card.topic === topic
+            );
+            
+            if (filteredCards.length === 0) {
+                alert('No flashcards found for this topic');
+                return;
+            }
+            
+            setQuizCards(filteredCards);
+            setShowQuiz(true);
+        } catch (error) {
+            console.error('Error fetching flashcards:', error);
+        }
     };
 
     return (
         <div className="App">
             <Leva collapsed />
             <div className="app-layout">
-                <History courses={courses} onSelectCourse={setSelectedCourse} />
+                <History 
+                    courses={courses} 
+                    onSelectCourse={setSelectedCourse} 
+                    loading={loading}
+                />
                 <div className="main-content">
                     <ChatInterface />
                     {selectedCourse && (
