@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -70,3 +71,11 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Add these settings if not already present
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Create directories for uploads
+UPLOAD_ROOT = os.path.join(MEDIA_ROOT, 'chat_documents')
+os.makedirs(UPLOAD_ROOT, exist_ok=True)
