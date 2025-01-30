@@ -24,13 +24,13 @@
 }
 
 .message.user {
-    background-color: #007bff;
+    background-color: #425faf;
     color: white;
     margin-left: auto;
 }
 
 .message.assistant {
-    background-color: #3d3d3d;
+    background-color: rgb(255, 255, 255);
     color: black;
     margin-right: auto;
 }
