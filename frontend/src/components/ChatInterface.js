@@ -47,9 +47,24 @@ const ChatInterface = () => {
         try {
             const response = await geminiChat(message, selectedFile);
             if (response && response.response) {
+                let content = response.response;
+                
+                // If flashcards were generated, add them to the message
+                if (response.flashcards && response.flashcards.length > 0) {
+                    content += "\n\nGenerated Flashcards:";
+                    response.flashcards.forEach((card, index) => {
+                        content += `\n\nCard ${index + 1}:`;
+                        content += `\nQ: ${card.question}`;
+                        content += `\nA: ${card.answer}`;
+                    });
+                    
+                    // You could also store these flashcards in your app's state
+                    // handleNewFlashcards(response.flashcards);
+                }
+                
                 setConversation(prev => [...prev, { 
                     role: 'assistant', 
-                    content: response.response 
+                    content: content
                 }]);
             } else {
                 throw new Error('Invalid response format');
