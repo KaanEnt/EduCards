@@ -1,5 +1,5 @@
 from rest_framework import generics
-from .models import ChatSession, ChatMessage
+from .models import ChatSession, ChatMessage, Flashcard
 from .serializers import ChatSessionSerializer, ChatMessageSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -9,6 +9,7 @@ import os
 import tempfile
 import shutil
 from rest_framework import status
+from .gemini_service import GeminiService
 
 class ChatSessionListCreateView(generics.ListCreateAPIView):
     queryset = ChatSession.objects.all()
@@ -21,18 +22,6 @@ class ChatMessageListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         session_id = self.kwargs['session_id']
         return ChatMessage.objects.filter(session_id=session_id)
-
-def process_pdf_to_flashcards(file_path):
-    """
-    Process PDF file and extract flashcard content.
-    This is a placeholder for your actual PDF processing logic.
-    """
-    # TODO: Implement your PDF processing logic here
-    # For now, return dummy flashcards
-    return [
-        {"question": "Sample Question 1", "answer": "Sample Answer 1"},
-        {"question": "Sample Question 2", "answer": "Sample Answer 2"},
-    ]
 
 @api_view(['POST'])
 def chat_message(request):
@@ -54,14 +43,22 @@ def chat_message(request):
                     for chunk in uploaded_file.chunks():
                         destination.write(chunk)
                 
-                # Process the PDF and generate flashcards
-                flashcards = process_pdf_to_flashcards(temp_file_path)
+                # Process the PDF using Gemini
+                gemini_service = GeminiService()
+                flashcards = gemini_service.process_pdf_to_flashcards(temp_file_path)
+                
+                # Save flashcards to database
+                for card in flashcards:
+                    Flashcard.objects.create(
+                        question=card['question'],
+                        answer=card['answer'],
+                        course=card['course'],
+                        topic=card['topic']
+                    )
                 
                 response_data['flashcards'] = flashcards
-                response_data['response'] += f"\nProcessed document: {uploaded_file.name}"
+                response_data['response'] = "Successfully processed document and created flashcards!"
                 
-                # The file will be automatically deleted when the temp directory is cleaned up
-        
         return Response(response_data, status=status.HTTP_200_OK)
         
     except Exception as e:

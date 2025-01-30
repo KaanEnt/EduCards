@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently \"npm run start:react\" \"npm run start:backend\"",
     "start:react": "react-scripts start",
-    "start:backend": "cd ../server && .\\..\\venv\\Scripts\\python manage.py runserver",
+    "start:backend": "cd ../server && poetry run python manage.py runserver",
     "setup": "npm install && cd .. && python -m venv venv && .\\venv\\Scripts\\pip install -r requirements.txt && cd server && ..\\venv\\Scripts\\python manage.py migrate",
     "build": "react-scripts build",
     "test": "react-scripts test",
