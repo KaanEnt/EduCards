@@ -39,6 +39,9 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
+# Or for development, you can use:
+CORS_ALLOW_ALL_ORIGINS = True  # Only in development!
+
 # Add/update these settings
 DEBUG = True  # Set this to True for development
 

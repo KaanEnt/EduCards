@@ -46,9 +46,20 @@ const ChatInterface = () => {
         
         try {
             const response = await geminiChat(message, selectedFile);
-            setConversation(prev => [...prev, { role: 'assistant', content: response.response }]);
+            if (response && response.response) {
+                setConversation(prev => [...prev, { 
+                    role: 'assistant', 
+                    content: response.response 
+                }]);
+            } else {
+                throw new Error('Invalid response format');
+            }
         } catch (error) {
-            setConversation(prev => [...prev, { role: 'assistant', content: 'Error: Could not get response' }]);
+            console.error('Chat error:', error);
+            setConversation(prev => [...prev, { 
+                role: 'assistant', 
+                content: `Error: ${error.message || 'Could not get response'}`
+            }]);
         } finally {
             setIsLoading(false);
             setMessage('');
