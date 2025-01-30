@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useSprings, animated, to as interpolate } from '@react-spring/web';
 import { useDrag } from 'react-use-gesture';
 import './Flashcard.css';
+import axios from 'axios';
 
-const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setShowAnswer }) => {
+const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setShowAnswer, cardColor, textColor, shadow, borderRadius }) => {
   const [gone] = useState(() => new Set());
   const [props, api] = useSprings(flashcards.length, i => ({
     x: 0,
@@ -25,7 +26,7 @@ const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setS
     
     if (!down && trigger) {
       gone.add(index);
-      setShowAnswer(false); // Reset to question view
+      setShowAnswer(false);
       if (dir === 1) onNext();
       else onPrevious();
     }
@@ -64,6 +65,16 @@ const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setS
   const trans = (r, s) =>
     `perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`;
 
+  const handleEdit = (id, updatedData) => {
+    axios.put(`http://localhost:8000/api/flashcards/${id}/`, updatedData)
+        .then(response => {
+            // Update local state or refetch data
+        })
+        .catch(error => {
+            console.error('Error updating flashcard:', error);
+        });
+  };
+
   return (
     <div className="flashcard-container">
       {props.map(({ x, y, rot, scale }, i) => (
@@ -73,6 +84,10 @@ const Flashcard = ({ flashcards, onNext, onPrevious, onShuffle, showAnswer, setS
             className="flashcard"
             style={{
               transform: interpolate([rot, scale], trans),
+              backgroundColor: cardColor,
+              color: textColor,
+              boxShadow: shadow,
+              borderRadius: `${borderRadius}px`
             }}
           >
             <div className={`card-side ${showAnswer ? 'hidden' : ''}`}>

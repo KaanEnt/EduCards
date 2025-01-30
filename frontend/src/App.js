@@ -4,10 +4,12 @@ import ChatInterface from './components/ChatInterface';
 import FlashcardList from './components/FlashcardList';
 import Quiz from './components/Quiz';
 import { Leva } from 'leva';
+import { useLevaControls } from './components/LevaControls';
 import axios from 'axios';
 import './App.css';
 
 function App() {
+    const { background, cardColor, textColor, shadow, borderRadius } = useLevaControls();
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [showQuiz, setShowQuiz] = useState(false);
     const [quizCards, setQuizCards] = useState([]);
@@ -81,7 +83,7 @@ function App() {
     };
 
     return (
-        <div className="App">
+        <div className="App" style={{ backgroundColor: background }}>
             <Leva collapsed />
             <div className="app-layout">
                 <History 
@@ -95,12 +97,23 @@ function App() {
                         <FlashcardList 
                             course={selectedCourse} 
                             onStartQuiz={handleStartQuiz}
+                            cardColor={cardColor}
+                            textColor={textColor}
+                            shadow={shadow}
+                            borderRadius={borderRadius}
                         />
                     )}
                 </div>
             </div>
             {showQuiz && (
-                <Quiz flashcards={quizCards} onClose={() => setShowQuiz(false)} />
+                <Quiz 
+                    flashcards={quizCards} 
+                    onClose={() => setShowQuiz(false)}
+                    cardColor={cardColor}
+                    textColor={textColor}
+                    shadow={shadow}
+                    borderRadius={borderRadius}
+                />
             )}
         </div>
     );

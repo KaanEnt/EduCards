@@ -11,7 +11,7 @@ const getRandomColor = (index) => {
     return colors[index % colors.length];
 };
 
-const FlashcardList = ({ course, onStartQuiz }) => {
+const FlashcardList = ({ course, onStartQuiz, cardColor, textColor, shadow, borderRadius }) => {
     const bind = useDrag(({ args: [topic], down, movement: [mx], direction: [xDir], velocity }) => {
         const trigger = velocity > 0.2;
         const dir = xDir < 0 ? -1 : 1;
@@ -32,7 +32,10 @@ const FlashcardList = ({ course, onStartQuiz }) => {
                         {...bind(topic)}
                     >
                         <div className="topic-card" style={{ 
-                            background: `linear-gradient(135deg, ${getRandomColor(index)}, ${getRandomColor(index + 1)})`
+                            background: `linear-gradient(135deg, ${getRandomColor(index)}, ${getRandomColor(index + 1)})`,
+                            color: textColor,
+                            boxShadow: shadow,
+                            borderRadius: `${borderRadius}px`
                         }}>
                             <div className="topic-content">
                                 <h4>{topic}</h4>

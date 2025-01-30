@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import Flashcard from './Flashcard';
 import './Quiz.css';
 
-const Quiz = ({ flashcards, onClose }) => {
+const Quiz = ({ flashcards, onClose, cardColor, textColor, shadow, borderRadius }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [shuffledCards, setShuffledCards] = useState([...flashcards]);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -72,6 +72,10 @@ const Quiz = ({ flashcards, onClose }) => {
                     onShuffle={handleShuffle}
                     showAnswer={showAnswer}
                     setShowAnswer={setShowAnswer}
+                    cardColor={cardColor}
+                    textColor={textColor}
+                    shadow={shadow}
+                    borderRadius={borderRadius}
                 />
             </div>
             <div className="controls">
