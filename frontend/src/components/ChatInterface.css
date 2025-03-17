@@ -1,0 +1,108 @@
+.chat-interface {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+    background-color: #3d3d3d;
+    border-radius: 8px;
+    position: relative;
+}
+
+.conversation {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #3d3d3d;
+    border-radius: 4px;
+}
+
+.message {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    max-width: 80%;
+}
+
+.message.user {
+    background-color: #425faf;
+    color: white;
+    margin-left: auto;
+}
+
+.message.assistant {
+    background-color: rgb(255, 255, 255);
+    color: black;
+    margin-right: auto;
+}
+
+.file-attachment {
+    margin-top: 5px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+textarea {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #3d3d3d;
+    border-radius: 4px;
+    resize: none;
+    min-height: 40px;
+    background-color: #3d3d3d;
+    color: white;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #3d3d3d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.file-preview {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background-color: #2d2d2d;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.file-preview button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+}
+
+.drag-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    pointer-events: none;
+} 

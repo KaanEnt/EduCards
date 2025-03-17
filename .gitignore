@@ -1,29 +1,78 @@
-# Ignore Visual Studio files
-.vs/
-
-# Ignore Python virtual environments
-venv/
-ENV/
-new_env/
-
-# Ignore node_modules
+# Dependencies
 node_modules/
+frontend/node_modules/
+venv/
 
-# Ignore macOS files
-.DS_Store
+# Build
+frontend/build/
 
-# Ignore Windows files
-Thumbs.db
-
-# Ignore compiled Python files
+# Cache
 __pycache__/
 *.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv
+venv/
+ENV/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
 
-# Ignore Django database and logs
-*.log
+# Environment
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Media files
+media/
+server/media/
+**/media/
+**/chat_documents/
+
+# Database
+*.sqlite3
 db.sqlite3
-db.sqlite3-journal
 
-# Ignore build files
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
 build/
+develop-eggs/
 dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log* 
